@@ -6,8 +6,15 @@ public class InteractableManager : MonoBehaviour
 {
     public InstructionManager alertBubble;
     public InstructionManager instructionBubble;
+    public GameObject TimerBar;
+    private GameObject bar;
+    private Vector3 barStartScale;
+    public int time;
     private bool buttonIsActive;
     private bool playerInRange;
+    public int triggerCount = 0;
+    public float barFillRatio = 0;
+
 
     public KeyCode trigger;
     public enum Interaction
@@ -32,12 +39,30 @@ public class InteractableManager : MonoBehaviour
         anim = player.GetComponent<Animator>();
         alertBubble.quickHideBubble();
         instructionBubble.quickHideBubble();
+        bar = TimerBar.transform.GetChild(1).gameObject;
+        barStartScale = bar.transform.localScale;
+        bar.transform.localScale = new Vector3(0, barStartScale.y, barStartScale.z);
         activateButton();
     }
-
     void Update()
     {
-        if (buttonIsActive && playerInRange)
+        barFillRatio = bar.transform.localScale.x/barStartScale.x;
+        Renderer barRenderer = bar.GetComponent<Renderer>();
+        
+        if (barFillRatio < .5)
+        {
+            barRenderer.material.color = Color.green;
+        }
+        else if (barFillRatio < .9)
+        {
+            barRenderer.material.color = Color.yellow;
+        }
+        else
+        {
+            barRenderer.material.color = Color.red;
+        }
+
+        if(buttonIsActive && playerInRange)
         {
             if (Input.GetKeyDown(trigger))
             {
@@ -80,17 +105,28 @@ public class InteractableManager : MonoBehaviour
         }
     }
 
+    void animateTimerBar()
+    {
+        LeanTween.moveLocalX(bar,0,time);
+        LeanTween.scaleX(bar,barStartScale.x,time).setOnComplete(() => deactivateButton());
+    }
+    void hideTimerBar()
+    {
+        LeanTween.scale(TimerBar, Vector3.zero, .3f).setEase( LeanTweenType.easeInBack);
+    }
+    
 
     void activateButton()
     {
         buttonIsActive = true;
         alertBubble.showBubble();
-        // do a dance and a jig
+        animateTimerBar();
     }
 
     void deactivateButton()
     {
         buttonIsActive = false;
+        hideTimerBar();
         alertBubble.hideBubble();
         instructionBubble.hideBubble();
     }

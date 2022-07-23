@@ -418,7 +418,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Spin Wheel
-  m_Speed: 0.88
+  m_Speed: 0.67
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -6873863975412246930}
