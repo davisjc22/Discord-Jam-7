@@ -7,6 +7,8 @@ public class InteractableManager : MonoBehaviour
     public InstructionManager alertBubble;
     public InstructionManager instructionBubble;
     private bool buttonIsActive;
+    private bool playerInRange;
+    public int triggerCount = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -16,32 +18,70 @@ public class InteractableManager : MonoBehaviour
         activateButton();
     }
 
+    void Update()
+    {
+        
+        if(playerInRange)
+        {
+            alertBubble.quickHideBubble();
+        }
+        else
+        {
+            instructionBubble.quickHideBubble();
+        }
+
+        if(buttonIsActive && playerInRange)
+        {
+            if(Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+            {
+                deactivateButton();
+            }
+        }
+    }
+
     // Update is called once per frame
     private void OnTriggerEnter(Collider other) 
     {
-        Debug.Log("Trigger Enter");
-        if(buttonIsActive && other.gameObject.CompareTag("Player"))
+        
+        if(other.gameObject.CompareTag("Player"))
         {
-            alertBubble.hideBubble();
-            instructionBubble.showBubble(1f);
+            triggerCount++;
+            playerInRange = true;
+            if(buttonIsActive)
+            {
+                alertBubble.quickHideBubble();
+                instructionBubble.showBubble();
+            }
         }
     }
 
     private void OnTriggerExit(Collider other) 
     {
-        Debug.Log("Trigger Exit");
-        if(buttonIsActive && other.gameObject.CompareTag("Player"))
+        
+        if(other.gameObject.CompareTag("Player"))
         {
-            alertBubble.showBubble(1f);
-            instructionBubble.hideBubble();
+            triggerCount--;
+            playerInRange = false;
+            if(buttonIsActive)
+            {
+                instructionBubble.quickHideBubble();
+                alertBubble.showBubble();
+            }
         }
     }
+    
 
     void activateButton()
     {
         buttonIsActive = true;
         alertBubble.showBubble();
         // do a dance and a jig
+    }
 
+    void deactivateButton()
+    {
+        buttonIsActive = false;
+        alertBubble.hideBubble();
+        instructionBubble.hideBubble();
     }
 }
