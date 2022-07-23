@@ -554,8 +554,6 @@ MonoBehaviour:
   instructionBubble: {fileID: 0}
   TimerBar: {fileID: 0}
   time: 0
-  triggerCount: 0
-  barFillRatio: 0
   trigger: 304
   selected_interaction: 1
   player: {fileID: 0}
@@ -603,8 +601,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: 19f13eccb0a456849b2809c4075fd0b5, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -837,8 +835,6 @@ MonoBehaviour:
   instructionBubble: {fileID: 2049842738}
   TimerBar: {fileID: 0}
   time: 0
-  triggerCount: 0
-  barFillRatio: 0
   trigger: 304
   selected_interaction: 1
   player: {fileID: 0}
@@ -2968,6 +2964,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3400729469069878398, guid: 198019cfb0031bc48a5ec5e234eb20df,
         type: 3}
+      propertyPath: time
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3400729469069878398, guid: 198019cfb0031bc48a5ec5e234eb20df,
+        type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 1355048110}
@@ -3040,6 +3041,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1225073167}
     m_Modifications:
+    - target: {fileID: 5152103499883682905, guid: 0098a15977b66bb4e9845aa15cb5c22c,
+        type: 3}
+      propertyPath: time
+      value: 40
+      objectReference: {fileID: 0}
     - target: {fileID: 5152103499883682905, guid: 0098a15977b66bb4e9845aa15cb5c22c,
         type: 3}
       propertyPath: player
@@ -3181,6 +3187,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5188116000053512869, guid: c6a5d774de23f4d43bc91105141ac90b,
         type: 3}
+      propertyPath: time
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 5188116000053512869, guid: c6a5d774de23f4d43bc91105141ac90b,
+        type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 1355048110}
@@ -3198,6 +3209,36 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1225073167}
     m_Modifications:
+    - target: {fileID: 30446015827652450, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 30446015827652450, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 30446015827652450, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 30446015827652450, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3245406399656293767, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3245406399656293769, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9049843505287701584, guid: 51179a73b35b660429e26be287f2b173,
         type: 3}
       propertyPath: m_RootOrder
@@ -3253,10 +3294,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9049843505287701585, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 1.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049843505287701585, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 3.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049843505287701585, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_Center.x
+      value: -4.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049843505287701585, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_Center.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049843505287701585, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_Center.z
+      value: -3.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049843505287701585, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9049843505287701587, guid: 51179a73b35b660429e26be287f2b173,
         type: 3}
       propertyPath: m_Name
       value: Lever Interactible
+      objectReference: {fileID: 0}
+    - target: {fileID: 9049843505287701590, guid: 51179a73b35b660429e26be287f2b173,
+        type: 3}
+      propertyPath: time
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 9049843505287701590, guid: 51179a73b35b660429e26be287f2b173,
         type: 3}
