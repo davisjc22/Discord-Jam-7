@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
         //groundedPlayer = controller.isGrounded;
         if(groundedPlayer)
         {
-            Debug.Log("GROUNDED");
+
         }
         if (groundedPlayer && playerVelocity.y < 0)
         {
@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
         // Changes the height position of the player..
         if (Input.GetButtonDown("Jump") && groundedPlayer)
         {
-            Debug.Log("JUMP");
+
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
         }
 
