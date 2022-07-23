@@ -8,9 +8,9 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController controller;
     private Vector3 playerVelocity;
     private bool groundedPlayer;
-    private float playerSpeed = 2.0f;
-    private float jumpHeight = 2.0f;
-    private float gravityValue = -9.81f;
+    public float playerSpeed = 2.0f;
+    public float jumpHeight = 2.0f;
+    public float gravityValue = -100f;
 
     public Transform groundCheck;
     public float groundDistance = 0.4f;
