@@ -15,28 +15,21 @@ public class InteractableManager : MonoBehaviour
         IDLE,
         PRESS_BUTTON,
         TYPE_KEYBOARD,
+        PULL_LEVER,
+        SPIN_WHEEL
     }
     public Interaction selected_interaction;
-
     private Animator anim;
-
     public GameObject player;
-
-    private Transform interactable;
-
+    public GameObject interactable;
     public AudioSource audioData;
 
-    private string status = "pressing";
-    private int stepCounter = 0;
-    private int stepMax = 10;
 
-    private bool isInteracting = false;
 
     // Start is called before the first frame update
     void Start()
     {
         anim = player.GetComponent<Animator>();
-        interactable = gameObject.transform;
         alertBubble.quickHideBubble();
         instructionBubble.quickHideBubble();
         activateButton();
@@ -48,13 +41,12 @@ public class InteractableManager : MonoBehaviour
         {
             if (Input.GetKeyDown(trigger))
             {
-                isInteracting = true;
                 ShowPlayerAnimation();
+                ShowInteractibleAnimation();
                 audioData.Play();
                 deactivateButton();
             }
         }
-        ShowInteractibleAnimation();
     }
 
     void ShowPlayerAnimation()
@@ -77,7 +69,6 @@ public class InteractableManager : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-
         if (other.gameObject.CompareTag("Player"))
         {
             playerInRange = false;
@@ -104,31 +95,55 @@ public class InteractableManager : MonoBehaviour
         instructionBubble.hideBubble();
     }
 
+    void PressButton()
+    {
+        LeanTween.moveY(interactable, interactable.transform.position.y - 0.1f, 0.5f).setOnComplete(() =>
+        {
+            LeanTween.moveY(interactable, interactable.transform.position.y + 0.1f, 0.5f).setOnComplete(() =>
+            {
+                anim.SetInteger("InteractionBehavior", ((int)Interaction.IDLE));
+            });
+        });
+
+    }
+
+    void PullLever()
+    {
+
+        LeanTween.moveLocalY(interactable, -0.1f, 0.5f).setOnComplete(() =>
+        {
+            LeanTween.moveLocalY(interactable, 0.1f, 0.5f).setOnComplete(() =>
+            {
+                anim.SetInteger("InteractionBehavior", ((int)Interaction.IDLE));
+            });
+        });
+
+    }
+    void SpinWheel()
+    {
+
+        LeanTween.rotateZ(interactable, 1080, 4).setOnComplete(() =>
+        {
+            anim.SetInteger("InteractionBehavior", ((int)Interaction.IDLE));
+        });
+
+    }
+
     void ShowInteractibleAnimation()
     {
 
-        if (isInteracting)
+        switch (selected_interaction)
         {
-            if (status == "pressing")
-            {
-                stepCounter++;
-                interactable.transform.Translate(Vector3.down * 0.01f);
-            }
-            if (stepCounter >= stepMax)
-            {
-                status = "depressing";
-            }
-            if (status == "depressing")
-            {
-                stepCounter--;
-                interactable.transform.Translate(Vector3.up * 0.01f);
-            }
-            if (stepCounter <= 0)
-            {
-                status = "pressing";
-                anim.SetInteger("InteractionBehavior", ((int)Interaction.IDLE));
-                isInteracting = false;
-            }
+            case Interaction.PRESS_BUTTON:
+                PressButton();
+                break;
+            case Interaction.PULL_LEVER:
+                PullLever();
+                break;
+            case Interaction.SPIN_WHEEL:
+                SpinWheel();
+                break;
         }
+
     }
 }
