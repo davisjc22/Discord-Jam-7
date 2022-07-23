@@ -22,6 +22,12 @@ public class GameManager : MonoBehaviour
 
     public TextMeshProUGUI comboText;
 
+    public KeyCode Key;
+ 
+    public float startTime = 0f;
+    public float holdTime = 5.0f; // 5 seconds
+ 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,9 +38,28 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // when the player presses down i for a set amount of time, drop an ink
-        if(Input.GetKeyDown(KeyCode.LeftShift))
+        // if(Input.GetKeyDown(KeyCode.LeftShift))
+        // {
+        //     makeInk();
+        // }
+        if(Input.GetKeyDown(Key))
         {
-            makeInk();
+            startTime = Time.time;
+            Debug.Log("Starting Timer");
+        }
+        else if (Input.GetKey(Key))
+        {
+            if (startTime + holdTime <= Time.time)
+            {
+                Debug.Log("It Works Great!");
+                makeInk();
+                startTime = Time.time;
+            }
+        }
+        else if(Input.GetKeyUp(Key))
+        {
+            Debug.Log("Ending Timer");
+            startTime = 0;
         }
     }
 
