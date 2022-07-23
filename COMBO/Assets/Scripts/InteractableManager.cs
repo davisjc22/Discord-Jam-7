@@ -20,15 +20,6 @@ public class InteractableManager : MonoBehaviour
 
     void Update()
     {
-        
-        if(playerInRange)
-        {
-            alertBubble.quickHideBubble();
-        }
-        else
-        {
-            instructionBubble.quickHideBubble();
-        }
 
         if(buttonIsActive && playerInRange)
         {
@@ -42,15 +33,14 @@ public class InteractableManager : MonoBehaviour
     // Update is called once per frame
     private void OnTriggerEnter(Collider other) 
     {
-        
-        if(other.gameObject.CompareTag("Player"))
+        if(other.gameObject.CompareTag("Player")) // if the player is colliding
         {
             triggerCount++;
             playerInRange = true;
             if(buttonIsActive)
             {
-                alertBubble.quickHideBubble();
-                instructionBubble.showBubble();
+                alertBubble.hideBubble();
+                instructionBubble.showBubble(true);
             }
         }
     }
@@ -64,8 +54,8 @@ public class InteractableManager : MonoBehaviour
             playerInRange = false;
             if(buttonIsActive)
             {
-                instructionBubble.quickHideBubble();
-                alertBubble.showBubble();
+                instructionBubble.hideBubble();
+                alertBubble.showBubble(true);
             }
         }
     }

@@ -7,8 +7,10 @@ public class InstructionManager : MonoBehaviour
 {
 
     private Vector3 originalScale;
-
     public TextMesh text;
+
+    public float showTime = .75f;
+    public float hideTime = .3f;
 
     // Start is called before the first frame update
     void Start()
@@ -22,14 +24,31 @@ public class InstructionManager : MonoBehaviour
     {
     }
 
-    public void showBubble(float delay = 0f)
+    public void showBubble(bool delay = false)
     {
-        LeanTween.scale(gameObject, originalScale, 1f).setEase( LeanTweenType.easeOutBack ).setDelay(delay);
+        float delayTime = 0f;
+        if(delay)
+        {
+            delayTime = hideTime;
+        }
+        
+        LeanTween.scale(gameObject, originalScale, showTime).setEase( LeanTweenType.easeOutBack ).setDelay(delayTime);
     }
 
-    public void hideBubble(float delay = 0f)
+    public void hideBubble(bool delay = false)
     {
-        LeanTween.scale(gameObject, Vector3.zero, 1f).setEase( LeanTweenType.easeInBack ).setDelay(delay);
+        if(LeanTween.isTweening(gameObject))
+        {
+            LeanTween.cancel(gameObject);
+        }
+
+        float delayTime = 0f;
+        if(delay)
+        {
+            delayTime = showTime;
+        }
+
+        LeanTween.scale(gameObject, Vector3.zero, hideTime).setEase( LeanTweenType.easeInBack ).setDelay(delayTime);
     }
 
        public void quickHideBubble(float delay = 0f)
