@@ -6,10 +6,12 @@ public class ThirdPersonMovement : MonoBehaviour
 {   
     private Animator anim;
     private CharacterController controller;
+    private Vector3 velocity;
 
     public float speed = 6f;
     public float turnSmoothTime = 0.1f;
-    public float gravity = 20.0f;
+    public float gravity = -9.8f;
+    public float jumpHeight = 2f;
 
     float turnSmoothVelocity;
 
@@ -34,7 +36,7 @@ public class ThirdPersonMovement : MonoBehaviour
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, turnSmoothTime);
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
             
-            direction.y -= gravity * Time.deltaTime;
+            // direction.y -= gravity * Time.deltaTime;
 
             controller.Move(direction * speed * Time.deltaTime);
         }
@@ -42,6 +44,5 @@ public class ThirdPersonMovement : MonoBehaviour
         {
             anim.SetInteger ("AnimationPar", 0);
         }
-
     }
 }
