@@ -8,7 +8,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Press Button
-  m_Speed: 1.15
+  m_Speed: 1.96
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 357281559244829417}
@@ -89,19 +89,19 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 1
-    m_ConditionEvent: TypingKeyboard
-    m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: InteractionBehavior
+    m_EventTreshold: 2
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 8954449792229022306}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.18653184
-  m_TransitionOffset: 0
-  m_ExitTime: 0.9086705
-  m_HasExitTime: 1
+  m_TransitionDuration: 0.46953744
+  m_TransitionOffset: 0.023972157
+  m_ExitTime: 0.6256649
+  m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
@@ -114,9 +114,9 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 1
-    m_ConditionEvent: PressingButton
-    m_EventTreshold: 0
+  - m_ConditionMode: 6
+    m_ConditionEvent: InteractionBehavior
+    m_EventTreshold: 1
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6649748887011754103}
   m_Solo: 0
@@ -126,7 +126,7 @@ AnimatorStateTransition:
   m_TransitionDuration: 0.47612464
   m_TransitionOffset: 0.31161538
   m_ExitTime: 0.4967783
-  m_HasExitTime: 1
+  m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
@@ -145,22 +145,28 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: PressingButton
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: TypingKeyboard
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
+  - m_Name: InteractionBehavior
+    m_Type: 3
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
-    m_Name: Base Layer
+    m_Name: Movement
     m_StateMachine: {fileID: 1107498530807583828}
     m_Mask: {fileID: 0}
     m_Motions: []
@@ -316,7 +322,7 @@ AnimatorStateMachine:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Base Layer
+  m_Name: Movement
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 1102945308341456978}
@@ -363,10 +369,7 @@ AnimatorStateTransition:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 
-  m_Conditions:
-  - m_ConditionMode: 2
-    m_ConditionEvent: TypingKeyboard
-    m_EventTreshold: 0
+  m_Conditions: []
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6265177343201367287}
   m_Solo: 0
@@ -417,7 +420,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Type on Keyboard
-  m_Speed: 1.15
+  m_Speed: 0.56
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 8253702913020105660}
