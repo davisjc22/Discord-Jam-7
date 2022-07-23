@@ -8,11 +8,35 @@ public class InteractableManager : MonoBehaviour
     public InstructionManager instructionBubble;
     private bool buttonIsActive;
     private bool playerInRange;
-    public int triggerCount = 0;
+
+    public KeyCode trigger;
+    public enum Interaction
+    {
+        IDLE,
+        PRESS_BUTTON,
+        TYPE_KEYBOARD,
+    }
+    public Interaction selected_interaction;
+
+    private Animator anim;
+
+    public GameObject player;
+
+    private Transform interactable;
+
+    public AudioSource audioData;
+
+    private string status = "pressing";
+    private int stepCounter = 0;
+    private int stepMax = 10;
+
+    private bool isInteracting = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        anim = player.GetComponent<Animator>();
+        interactable = gameObject.transform;
         alertBubble.quickHideBubble();
         instructionBubble.quickHideBubble();
         activateButton();
@@ -20,24 +44,30 @@ public class InteractableManager : MonoBehaviour
 
     void Update()
     {
-
-        if(buttonIsActive && playerInRange)
+        if (buttonIsActive && playerInRange)
         {
-            if(Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+            if (Input.GetKeyDown(trigger))
             {
+                isInteracting = true;
+                ShowPlayerAnimation();
+                audioData.Play();
                 deactivateButton();
             }
         }
+        ShowInteractibleAnimation();
     }
 
-    // Update is called once per frame
-    private void OnTriggerEnter(Collider other) 
+    void ShowPlayerAnimation()
     {
-        if(other.gameObject.CompareTag("Player")) // if the player is colliding
+        anim.SetInteger("InteractionBehavior", ((int)selected_interaction));
+    }
+    // Update is called once per frame
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player")) // if the player is colliding
         {
-            triggerCount++;
             playerInRange = true;
-            if(buttonIsActive)
+            if (buttonIsActive)
             {
                 alertBubble.hideBubble();
                 instructionBubble.showBubble(true);
@@ -45,21 +75,20 @@ public class InteractableManager : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit(Collider other) 
+    private void OnTriggerExit(Collider other)
     {
-        
-        if(other.gameObject.CompareTag("Player"))
+
+        if (other.gameObject.CompareTag("Player"))
         {
-            triggerCount--;
             playerInRange = false;
-            if(buttonIsActive)
+            if (buttonIsActive)
             {
                 instructionBubble.hideBubble();
                 alertBubble.showBubble(true);
             }
         }
     }
-    
+
 
     void activateButton()
     {
@@ -73,5 +102,33 @@ public class InteractableManager : MonoBehaviour
         buttonIsActive = false;
         alertBubble.hideBubble();
         instructionBubble.hideBubble();
+    }
+
+    void ShowInteractibleAnimation()
+    {
+
+        if (isInteracting)
+        {
+            if (status == "pressing")
+            {
+                stepCounter++;
+                interactable.transform.Translate(Vector3.down * 0.01f);
+            }
+            if (stepCounter >= stepMax)
+            {
+                status = "depressing";
+            }
+            if (status == "depressing")
+            {
+                stepCounter--;
+                interactable.transform.Translate(Vector3.up * 0.01f);
+            }
+            if (stepCounter <= 0)
+            {
+                status = "pressing";
+                anim.SetInteger("InteractionBehavior", ((int)Interaction.IDLE));
+                isInteracting = false;
+            }
+        }
     }
 }
