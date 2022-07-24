@@ -27,8 +27,10 @@ public class GameManager : MonoBehaviour
 
     public ScoreboardManager sbm;
 
+    public EnvironmentManager environmentManager;
+
     public KeyCode Key;
- 
+
     public float startTime = 0f;
     public float holdTime = 5.0f; // 5 seconds
 
@@ -37,6 +39,8 @@ public class GameManager : MonoBehaviour
     private Vector3 TimerBarScale;
     private GameObject bar;
     private Vector3 barStartScale;
+
+    private bool isPlaying = true;
 
     // Start is called before the first frame update
     void Start()
@@ -50,11 +54,8 @@ public class GameManager : MonoBehaviour
         barRenderer.material.color = Color.magenta;
         resetTimerBar();
         hideTimerBar();
-        sbm.SetLives(numLives);
-        sbm.SetCombo(combo.ToString());
-        sbm.SetScore(score.ToString());
+        ResetGame(true);
         startInterval = Time.time; // start the clock for the interactions
-        sbm.EnableTimer(true);
     }
 
     // Update is called once per frame
@@ -63,7 +64,14 @@ public class GameManager : MonoBehaviour
         Vector3 barPosition = new Vector3(player.transform.position.x, player.transform.position.y + 5f, player.transform.position.z);
         TimerBar.transform.position = barPosition;
 
-        if(Input.GetKeyDown(Key))
+        if (!isPlaying)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                ResetGame(false);
+            }
+        }
+        if (Input.GetKeyDown(Key))
         {
             startTime = Time.time;
             Debug.Log("Starting Timer");
@@ -82,28 +90,47 @@ public class GameManager : MonoBehaviour
                 animateTimerBar();
             }
         }
-        else if(Input.GetKeyUp(Key))
+        else if (Input.GetKeyUp(Key))
         {
             Debug.Log("Ending Timer");
             startTime = 0;
-            
+
             LeanTween.cancel(bar);
             resetTimerBar();
             hideTimerBar();
         }
 
         // if time > starttime + timeRange
-            
-        if(startInterval + interval <= Time.time)
+
+        if (startInterval + interval <= Time.time)
         {
             Debug.Log("Time for an action!");
             // pick a random interactable
-            int index = Random.Range (0, interactables.Length);
-            InteractableManager currentInteractable = interactables[index];
-            currentInteractable.activateButton();// activate it
+            int index = Random.Range(0, interactables.Length);
+            if (isPlaying)
+            {
+
+                InteractableManager currentInteractable = interactables[index];
+                currentInteractable.activateButton();// activate it
+            }
             startInterval = Time.time;
         }
-        
+
+    }
+
+    private void ResetGame(bool firstTime)
+    {
+        combo = 1;
+        score = 0;
+        numLives = 3;
+        sbm.ShowGamePlay(firstTime);
+        sbm.SetCombo(combo);
+        sbm.SetScore(score);
+        sbm.SetLives(numLives);
+        sbm.ResetTimer();
+        sbm.SetTimerEnabled(true);
+        isPlaying = true;
+        environmentManager.ZoomAwayFromScoreboard();
     }
 
     private void makeInk()
@@ -115,51 +142,62 @@ public class GameManager : MonoBehaviour
     public void incrementCombo()
     {
         combo++;
-        sbm.SetCombo(combo.ToString());
-        // comboText.text = "COMBO: " + combo + "X";
+        sbm.SetCombo(combo);
     }
 
     public void updateScore()
     {
         score += points * combo;
-        sbm.SetScore(score.ToString());
-        // scoreText.text = "SCORE: " + score;
+        sbm.SetScore(score);
     }
 
     public void missedAlert()
     {
-        numLives--;
-        sbm.SetLives(numLives);
-        Debug.Log("Lost a life :(");
-        if(numLives == 0)
+        if (isPlaying)
         {
-            Debug.Log("Game Over!");
-            gameOverText.SetActive(true);
-            sbm.EnableTimer(false);
+
+            numLives--;
+            sbm.SetLives(numLives);
+            Debug.Log("Lost a life :(");
+            if (numLives == 0)
+            {
+                sbm.ShowGameOver();
+                environmentManager.ZoomToScoreboard();
+                isPlaying = false;
+                foreach (InteractableManager interactable in interactables)
+                {
+                    interactable.deactivateButton(false);
+                }
+            }
+            else
+            {
+
+                environmentManager.isFlickering = true;
+                environmentManager.isShaking = true;
+            }
+            combo = (int)Mathf.Max(Mathf.Ceil(combo / 2), 1f);
+            sbm.SetCombo(combo);
         }
-        combo = (int) Mathf.Ceil(combo / 2);
-        sbm.SetCombo(combo.ToString());
-        // comboText.text = "COMBO: " + combo + "X";
     }
 
     // Ink Bar Stuff
     void resetTimerBar()
     {
         LeanTween.moveLocalX(bar, 0f, 0f);
-        LeanTween.scaleX(bar,0f,0f);
+        LeanTween.scaleX(bar, 0f, 0f);
     }
     void animateTimerBar()
     {
-        LeanTween.moveLocalX(bar,0,holdTime);
-        LeanTween.scaleX(bar,barStartScale.x,holdTime);
+        LeanTween.moveLocalX(bar, 0, holdTime);
+        LeanTween.scaleX(bar, barStartScale.x, holdTime);
     }
     void hideTimerBar()
     {
-        LeanTween.scale(TimerBar, Vector3.zero, .3f).setEase( LeanTweenType.easeInBack);
+        LeanTween.scale(TimerBar, Vector3.zero, .3f).setEase(LeanTweenType.easeInBack);
     }
 
     void showTimerBar()
     {
-        LeanTween.scale(TimerBar, TimerBarScale, .5f).setEase( LeanTweenType.easeOutBack);;
+        LeanTween.scale(TimerBar, TimerBarScale, .5f).setEase(LeanTweenType.easeOutBack); ;
     }
 }
