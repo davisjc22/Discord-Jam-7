@@ -16,6 +16,12 @@ public class EnvironmentManager : MonoBehaviour
     private float shakeElapsed = 0f;
 
     public float shakeAmount = 0.2f;
+
+    public bool isZooming = true;
+    public float zoomInFOV = 33f;
+    public float zoomOutFOV = 68f;
+    private float zoomTarget;
+    public float cameraTransitionDuration = 1f;
     Vector3 originalCameraPosition;
     void Start()
     {
@@ -30,6 +36,7 @@ public class EnvironmentManager : MonoBehaviour
                 light.intensity = standardIntensity;
             }   
         }
+        ZoomAwayFromScoreboard();
     }
 
     // Update is called once per frame
@@ -37,6 +44,7 @@ public class EnvironmentManager : MonoBehaviour
     {
         Flicker();
         CameraShake();
+        ZoomCamera();
     }
 
     void CameraShake()
@@ -74,5 +82,35 @@ public class EnvironmentManager : MonoBehaviour
                 light.intensity = standardIntensity;
             }
         }
+    }
+
+    void ZoomCamera()
+    {
+        Camera cam = cameraTransform.gameObject.GetComponent<Camera>();
+        if (isZooming)
+        {
+            float angle = Mathf.Abs(zoomInFOV - zoomOutFOV);
+            cam.fieldOfView = Mathf.MoveTowards(cam.fieldOfView, zoomTarget, angle / cameraTransitionDuration * Time.deltaTime);
+
+        }
+        if (Mathf.Abs(cam.fieldOfView - zoomTarget) < 0.1f)
+        {
+            isZooming = false;
+        }
+    }
+
+    public void ZoomToScoreboard()
+    {
+        LeanTween.moveLocal(cameraTransform.gameObject, new Vector3(-0.5f, -9.5f, -7.5f), cameraTransitionDuration).setEase(LeanTweenType.easeInOutSine);
+        LeanTween.rotateLocal(cameraTransform.gameObject, new Vector3(0f, 0f, 0f), cameraTransitionDuration).setEase(LeanTweenType.easeInOutSine);
+        isZooming = true;
+        zoomTarget = zoomInFOV;
+    }
+    public void ZoomAwayFromScoreboard()
+    {
+        LeanTween.moveLocal(cameraTransform.gameObject, new Vector3(-0.5f, -9.5f, -15.5f), cameraTransitionDuration).setEase(LeanTweenType.easeInOutSine);
+        LeanTween.rotateLocal(cameraTransform.gameObject, new Vector3(22f, 0f, 0f), cameraTransitionDuration).setEase(LeanTweenType.easeInOutSine);
+        isZooming = true;
+        zoomTarget = zoomOutFOV;
     }
 }

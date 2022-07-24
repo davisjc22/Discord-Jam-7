@@ -224,7 +224,7 @@ public class InteractableManager : MonoBehaviour
         startTime = Time.time;
     }
 
-    void deactivateButton(bool completed)
+    public void deactivateButton(bool completed)
     {
         buttonIsActive = false;
         // hideTimerBar();
