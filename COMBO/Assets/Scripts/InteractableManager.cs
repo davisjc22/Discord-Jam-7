@@ -88,13 +88,13 @@ public class InteractableManager : MonoBehaviour
 
         if (buttonIsActive && playerInRange)
         {
-            Debug.Log("pressStartTime: " + pressStartTime);
-            Debug.Log("pressHoldTime: " + pressHoldTime);
-            Debug.Log("Time: " + Time.time);
+            // Debug.Log("pressStartTime: " + pressStartTime);
+            // Debug.Log("pressHoldTime: " + pressHoldTime);
+            // Debug.Log("Time: " + Time.time);
             if(Input.GetKeyDown(trigger)) //when the key is first pressed
             {
                 pressStartTime = Time.time;
-                Debug.Log("Starting Timer");
+                //Debug.Log("Starting Timer");
                 pauseTimerBar();
                 holdingButton = true;
 
@@ -106,13 +106,16 @@ public class InteractableManager : MonoBehaviour
                 if (pressStartTime + pressHoldTime <= Time.time)
                 {
                     deactivateButton(true); // successfully performed operation
-                    Debug.Log("Action Complete!");
+                    //Debug.Log("Action Complete!");
                     LeanTween.cancel(bar);
                     hideTimerBar();
                     resetTimerBar();
                     pressStartTime = 0;
                     stopPlayerTimerBar();
                     Instantiate(interactionParticle, transform.position, Quaternion.identity);
+                    ShowInteractibleAnimation();
+                    ShowPlayerAnimation();
+                    audioData.Play();
                 }
                 holdingButton = true;
             }
@@ -127,7 +130,7 @@ public class InteractableManager : MonoBehaviour
 
         if(buttonIsActive && (startTime + time <= Time.time && buttonIsActive) && !holdingButton)
         {
-            Debug.Log("ouch, didn't make it");
+            //Debug.Log("ouch, didn't make it");
             deactivateButton(false);
         }
     }
