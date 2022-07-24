@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Sunlight
   - RoomLights
+  - Unbreakable
   layers:
   - Default
   - TransparentFX

@@ -153,7 +153,14 @@ public class InteractableManager : MonoBehaviour
     public void activateButton()
     {
         buttonIsActive = true;
-        alertBubble.showBubble();
+        if(playerInRange)
+        {
+            instructionBubble.showBubble();
+        }
+        else
+        {
+            alertBubble.showBubble();
+        }
         showTimerBar();
         animateTimerBar();
         startTime = Time.time;
