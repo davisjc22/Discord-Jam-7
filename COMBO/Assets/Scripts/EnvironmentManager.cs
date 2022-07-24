@@ -31,7 +31,10 @@ public class EnvironmentManager : MonoBehaviour
         originalCameraPosition = cameraTransform.localPosition;
         foreach (Light light in lights)
         {
-            light.intensity = standardIntensity;
+            if(light.gameObject.tag == "RoomLights")
+            {
+                light.intensity = standardIntensity;
+            }   
         }
         ZoomAwayFromScoreboard();
     }

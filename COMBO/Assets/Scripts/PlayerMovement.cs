@@ -18,6 +18,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundMask;
     bool isGrounded;
 
+    public ParticleSystem system;
+
     private void Start()
     {
         anim = GetComponentInChildren<Animator>();
@@ -26,6 +28,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {   
+        bool lastGroundedValue = groundedPlayer;
         groundedPlayer = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         //groundedPlayer = controller.isGrounded;
@@ -51,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
         {
 
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+            system.Stop();
         }
 
         playerVelocity.y += gravityValue * Time.deltaTime;
@@ -59,10 +63,19 @@ public class PlayerMovement : MonoBehaviour
         if(move.magnitude >= 0.1f && groundedPlayer)
         {
             anim.SetInteger ("AnimationPar", 1);
+            system.Play();
         }
         else
         {
             anim.SetInteger ("AnimationPar", 0);
+            if(lastGroundedValue == false && groundedPlayer)
+            {
+                system.Play();
+            }
+            else
+            {
+                system.Stop();
+            }
         }
 
     }

@@ -17,6 +17,13 @@ public class InteractableManager : MonoBehaviour
     //interactable timer
     public float startTime = 0f;
 
+
+    // key holding
+    public float pressStartTime;
+    public float pressHoldTime = 3f;
+
+    public GameObject playerTimerBar;
+
     private bool buttonIsActive;
     private bool playerInRange;
     public KeyCode trigger;
@@ -38,6 +45,7 @@ public class InteractableManager : MonoBehaviour
     public Color32 barYellow = new Color32(239, 129, 78, 255);
     public Color32 barRed = new Color32(181, 37, 37, 255);
 
+    public ParticleSystem interactionParticle;
 
     // Start is called before the first frame update
     void Start()
@@ -52,12 +60,16 @@ public class InteractableManager : MonoBehaviour
         barStartPosition = bar.transform.localPosition;
         TimerBarScale = TimerBar.transform.localScale;
         bar.transform.localScale = new Vector3(0, barStartScale.y, barStartScale.z);
-
+        pressStartTime = 0;
+        pressHoldTime = 3f;
         hideTimerBar();
+
+        playerTimerBar = GameObject.Find("PlayerTimerBar");
         //activateButton();
     }
     void Update()
     {
+        bool holdingButton = false;
         float barFillRatio = bar.transform.localScale.x / barStartScale.x;
         Renderer barRenderer = bar.GetComponent<Renderer>();
 
@@ -76,23 +88,62 @@ public class InteractableManager : MonoBehaviour
 
         if (buttonIsActive && playerInRange)
         {
-            if (Input.GetKeyDown(trigger))
+            Debug.Log("pressStartTime: " + pressStartTime);
+            Debug.Log("pressHoldTime: " + pressHoldTime);
+            Debug.Log("Time: " + Time.time);
+            if(Input.GetKeyDown(trigger)) //when the key is first pressed
             {
-                
-                ShowPlayerAnimation();
-                ShowInteractibleAnimation();
-                audioData.Play();
-                LeanTween.cancel(bar);
-                deactivateButton(true);
-                hideTimerBar();
+                pressStartTime = Time.time;
+                Debug.Log("Starting Timer");
+                pauseTimerBar();
+                holdingButton = true;
+
+                //start the player timer
+                startPlayerTimerBar();
+            }
+            else if (Input.GetKey(trigger))
+            {
+                if (pressStartTime + pressHoldTime <= Time.time)
+                {
+                    deactivateButton(true); // successfully performed operation
+                    Debug.Log("Action Complete!");
+                    LeanTween.cancel(bar);
+                    hideTimerBar();
+                    resetTimerBar();
+                    pressStartTime = 0;
+                    stopPlayerTimerBar();
+                    Instantiate(interactionParticle, transform.position, Quaternion.identity);
+                }
+                holdingButton = true;
+            }
+            else if(Input.GetKeyUp(trigger))
+            {
+                pressStartTime = 0;
+                holdingButton = false;
+
+                stopPlayerTimerBar();
             }
         }
 
-        if(startTime + time <= Time.time && buttonIsActive)
+        if(buttonIsActive && (startTime + time <= Time.time && buttonIsActive) && !holdingButton)
         {
+            Debug.Log("ouch, didn't make it");
             deactivateButton(false);
         }
+    }
 
+    void startPlayerTimerBar()
+    {
+        manager.colorTimerBar(new Color32(48, 123, 140, 255));
+        manager.showTimerBar();
+        manager.animateTimerBar(pressHoldTime);
+        
+    }
+
+    void stopPlayerTimerBar()
+    {
+        manager.hideTimerBar();
+        manager.resetTimerBar();
     }
 
     void ShowPlayerAnimation()
@@ -132,6 +183,13 @@ public class InteractableManager : MonoBehaviour
         // LeanTween.scaleX(bar, barStartScale.x, time);
         LeanTween.scaleX(bar, barStartScale.x, time).setOnComplete(() => hideTimerBar());
     }
+
+    void pauseTimerBar()
+    {
+        LeanTween.pause(bar);
+
+    }
+
     void hideTimerBar()
     {
         LeanTween.scale(TimerBar, Vector3.zero, .3f).setEase(LeanTweenType.easeInBack).setOnComplete(() => resetTimerBar());
@@ -153,7 +211,14 @@ public class InteractableManager : MonoBehaviour
     public void activateButton()
     {
         buttonIsActive = true;
-        alertBubble.showBubble();
+        if(playerInRange)
+        {
+            instructionBubble.showBubble();
+        }
+        else
+        {
+            alertBubble.showBubble();
+        }
         showTimerBar();
         animateTimerBar();
         startTime = Time.time;
