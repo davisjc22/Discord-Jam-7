@@ -36,7 +36,7 @@ public class InteractableManager : MonoBehaviour
         anim = player.GetComponent<Animator>();
         alertBubble.quickHideBubble();
         instructionBubble.quickHideBubble();
-        bar = TimerBar.transform.GetChild(1).gameObject;
+        bar = TimerBar.transform.Find("bar").gameObject;
         barStartScale = bar.transform.localScale;
         bar.transform.localScale = new Vector3(0, barStartScale.y, barStartScale.z);
         activateButton();
@@ -128,6 +128,14 @@ public class InteractableManager : MonoBehaviour
         instructionBubble.hideBubble();
     }
 
+    void resetAnimation()
+    {
+        LeanTween.moveY(interactable, interactable.transform.position.y, 0.5f).setOnComplete(() =>
+        {
+        anim.SetInteger("InteractionBehavior", ((int)Interaction.IDLE));
+        });
+    }
+
     void PressButton()
     {
         LeanTween.moveY(interactable, interactable.transform.position.y - 0.1f, 0.5f).setOnComplete(() =>
@@ -175,6 +183,9 @@ public class InteractableManager : MonoBehaviour
                 break;
             case Interaction.SPIN_WHEEL:
                 SpinWheel();
+                break;
+            default:
+                resetAnimation();
                 break;
         }
 
