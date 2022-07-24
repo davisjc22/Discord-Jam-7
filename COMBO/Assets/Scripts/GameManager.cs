@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     private Vector3 barStartScale;
     public Color32 barInk = new Color32(166, 31, 81, 255);
 
-    private bool isPlaying = true;
+    private bool isPlaying = false;
 
     // Start is called before the first frame update
     void Start()
@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
         barRenderer.material.color = barInk;
         resetTimerBar();
         hideTimerBar();
+        environmentManager.ZoomToScoreboard();
         ResetGame(true);
         startInterval = Time.time; // start the clock for the interactions
     }

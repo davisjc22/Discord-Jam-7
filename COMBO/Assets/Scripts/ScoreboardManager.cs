@@ -15,6 +15,7 @@ public class ScoreboardManager : MonoBehaviour
     public TextMeshProUGUI gameOverScoreTextElement;
     public GameObject resultsScreen;
     public GameObject gameplayScreen;
+    public GameObject infoScreen;
     public RawImage life1;
     public RawImage life2;
     public RawImage life3;
@@ -27,11 +28,13 @@ public class ScoreboardManager : MonoBehaviour
     private int rating = 0;
     private int numLives = 0;
 
+    private GameObject activeScreen;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        ShowScreen(infoScreen);
     }
 
     string SecondsToTime(int time)
@@ -124,6 +127,7 @@ public class ScoreboardManager : MonoBehaviour
     public LTDescr ShowScreen(GameObject screen)
     {
         screen.transform.position = new Vector3(screen.transform.position.x, 800, screen.transform.position.z);
+        activeScreen = screen;
         return LeanTween.moveLocalY(screen, 0, 0.8f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.5f);
     }
     public void HideScreen(GameObject screen)
@@ -135,7 +139,7 @@ public class ScoreboardManager : MonoBehaviour
     }
     public LTDescr ReplaceScreen(GameObject oldScreen, GameObject newScreen)
     {
-        HideScreen(oldScreen);
+        HideScreen(activeScreen);
         return ShowScreen(newScreen);
     }
     public void ShowGameOver()
@@ -160,10 +164,12 @@ public class ScoreboardManager : MonoBehaviour
         StopAllCoroutines();
         if (firstTime)
         {
-            StartGamePlay();
+            ShowScreen(infoScreen);
+            // StartGamePlay();
         }
         else
         {
+            // HideScreen(infoScreen);
             ReplaceScreen(resultsScreen, gameplayScreen);
         }
     }

@@ -568,10 +568,15 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 702705610}
+    - target: {fileID: 3102468417313019151, guid: 7fbfdbf763eb1734c9da437fd9249b37,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 595
+      objectReference: {fileID: 0}
     - target: {fileID: 3592264310115386596, guid: 7fbfdbf763eb1734c9da437fd9249b37,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 595
       objectReference: {fileID: 0}
     - target: {fileID: 5795211973040729934, guid: 7fbfdbf763eb1734c9da437fd9249b37,
         type: 3}
@@ -581,6 +586,16 @@ PrefabInstance:
     - target: {fileID: 5795211973040729934, guid: 7fbfdbf763eb1734c9da437fd9249b37,
         type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7818776634722811785, guid: 7fbfdbf763eb1734c9da437fd9249b37,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 595
+      objectReference: {fileID: 0}
+    - target: {fileID: 8341790553387648270, guid: 7fbfdbf763eb1734c9da437fd9249b37,
+        type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
