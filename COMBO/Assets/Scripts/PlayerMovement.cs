@@ -18,6 +18,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundMask;
     bool isGrounded;
 
+    public ParticleSystem system;
+
     private void Start()
     {
         anim = GetComponentInChildren<Animator>();
@@ -59,10 +61,12 @@ public class PlayerMovement : MonoBehaviour
         if(move.magnitude >= 0.1f && groundedPlayer)
         {
             anim.SetInteger ("AnimationPar", 1);
+            system.Play();
         }
         else
         {
             anim.SetInteger ("AnimationPar", 0);
+            system.Stop();
         }
 
     }
