@@ -53,8 +53,6 @@ MonoBehaviour:
   instructionBubble: {fileID: 1252239446711435671}
   TimerBar: {fileID: 7537930659455360898}
   time: 0
-  triggerCount: 0
-  barFillRatio: 0
   trigger: 304
   selected_interaction: 3
   player: {fileID: 0}
@@ -68,11 +66,11 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9049843505287701587}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.647316, y: 3.120965, z: 1}
+  m_Center: {x: -4.626342, y: -1.0604825, z: -3.07}
 --- !u!1001 &9049843505418460341
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -454,6 +452,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Lever_Prefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 5809220570440302438, guid: a0164d9c476080e449c72cf58e7709ab,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5809220570440302440, guid: a0164d9c476080e449c72cf58e7709ab,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0164d9c476080e449c72cf58e7709ab, type: 3}
