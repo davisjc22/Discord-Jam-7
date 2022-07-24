@@ -32,6 +32,7 @@ public class InteractableManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.Find("Player");
         anim = player.GetComponent<Animator>();
         alertBubble.quickHideBubble();
         instructionBubble.quickHideBubble();
