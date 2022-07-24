@@ -31,10 +31,10 @@ public class EnvironmentManager : MonoBehaviour
         originalCameraPosition = cameraTransform.localPosition;
         foreach (Light light in lights)
         {
-            if(light.gameObject.tag == "RoomLights")
+            if (light.gameObject.tag == "RoomLights")
             {
                 light.intensity = standardIntensity;
-            }   
+            }
         }
         ZoomAwayFromScoreboard();
     }
@@ -69,7 +69,10 @@ public class EnvironmentManager : MonoBehaviour
         {
             foreach (Light light in lights)
             {
-                light.intensity = Random.Range(1, 100);
+                if (light.CompareTag("RoomLights"))
+                {
+                    light.intensity = Random.Range(1, 100);
+                }
             }
             flickerElapsed += Time.deltaTime;
         }
@@ -79,7 +82,10 @@ public class EnvironmentManager : MonoBehaviour
             isFlickering = false;
             foreach (Light light in lights)
             {
-                light.intensity = standardIntensity;
+                if (light.CompareTag("RoomLights"))
+                {
+                    light.intensity = standardIntensity;
+                }
             }
         }
     }
@@ -108,7 +114,7 @@ public class EnvironmentManager : MonoBehaviour
     }
     public void ZoomAwayFromScoreboard()
     {
-        if(cameraTransform == null)
+        if (cameraTransform == null)
         {
             Camera camera = FindObjectOfType<Camera>();
             cameraTransform = camera.GetComponent<Transform>();

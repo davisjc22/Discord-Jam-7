@@ -148,6 +148,10 @@ public class ScoreboardManager : MonoBehaviour
         life1.enabled = false;
         life2.enabled = false;
         life3.enabled = false;
+        foreach (RawImage image in ratingImages)
+        {
+            image.enabled = false;
+        }
         float maximumPPS = 2000f / 60f;
         int _rating = (int)Mathf.Max(Mathf.Min((score / timerCounter) / maximumPPS, 8f), 1f);
         SetRating(_rating);
