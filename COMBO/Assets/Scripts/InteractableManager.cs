@@ -4,12 +4,19 @@ using UnityEngine;
 
 public class InteractableManager : MonoBehaviour
 {
+    public GameManager manager;
     public InstructionManager alertBubble;
     public InstructionManager instructionBubble;
     public GameObject TimerBar;
     private GameObject bar;
+    private Vector3 barStartPosition;
     private Vector3 barStartScale;
+    private Vector3 TimerBarScale;
     public int time;
+
+    //interactable timer
+    public float startTime = 0f;
+
     private bool buttonIsActive;
     private bool playerInRange;
     public KeyCode trigger;
@@ -32,13 +39,19 @@ public class InteractableManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        manager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        player = GameObject.Find("Player");
         anim = player.GetComponent<Animator>();
         alertBubble.quickHideBubble();
         instructionBubble.quickHideBubble();
-        bar = TimerBar.transform.GetChild(1).gameObject;
+        bar = TimerBar.transform.Find("bar").gameObject;
         barStartScale = bar.transform.localScale;
+        barStartPosition = bar.transform.localPosition;
+        TimerBarScale = TimerBar.transform.localScale;
         bar.transform.localScale = new Vector3(0, barStartScale.y, barStartScale.z);
-        activateButton();
+
+        hideTimerBar();
+        //activateButton();
     }
     void Update()
     {
@@ -62,12 +75,20 @@ public class InteractableManager : MonoBehaviour
         {
             if (Input.GetKeyDown(trigger))
             {
+                
                 ShowPlayerAnimation();
                 ShowInteractibleAnimation();
                 audioData.Play();
-                deactivateButton();
+                LeanTween.cancel(bar);
+                deactivateButton(true);
             }
         }
+
+        if(startTime + time <= Time.time && buttonIsActive)
+        {
+            deactivateButton(false);
+        }
+
     }
 
     void ShowPlayerAnimation()
@@ -104,27 +125,61 @@ public class InteractableManager : MonoBehaviour
     void animateTimerBar()
     {
         LeanTween.moveLocalX(bar, 0, time);
-        LeanTween.scaleX(bar, barStartScale.x, time).setOnComplete(() => deactivateButton());
+        // LeanTween.scaleX(bar, barStartScale.x, time);
+        LeanTween.scaleX(bar, barStartScale.x, time).setOnComplete(() => hideTimerBar());
     }
     void hideTimerBar()
     {
-        LeanTween.scale(TimerBar, Vector3.zero, .3f).setEase(LeanTweenType.easeInBack);
+        LeanTween.scale(TimerBar, Vector3.zero, .3f).setEase(LeanTweenType.easeInBack).setOnComplete(() => resetTimerBar());
     }
 
+    void showTimerBar()
+    {
+        LeanTween.scale(TimerBar, TimerBarScale, .5f).setEase( LeanTweenType.easeOutBack);
+    }
 
-    void activateButton()
+    void resetTimerBar()
+    {
+        bar.transform.localScale = new Vector3(0, barStartScale.y, barStartScale.z);
+        bar.transform.localPosition = barStartPosition;
+        // LeanTween.moveLocalX(bar, 0f, 0f);
+        // LeanTween.scaleX(bar,0f,0f);
+    }
+
+    public void activateButton()
     {
         buttonIsActive = true;
         alertBubble.showBubble();
+        showTimerBar();
         animateTimerBar();
+        startTime = Time.time;
     }
 
-    void deactivateButton()
+    void deactivateButton(bool completed)
     {
         buttonIsActive = false;
-        hideTimerBar();
+        // hideTimerBar();
         alertBubble.hideBubble();
         instructionBubble.hideBubble();
+        
+        if(completed)
+        {
+            manager.updateScore();
+            Debug.Log("Good job");
+        }
+        else
+        {
+            manager.missedAlert();
+            Debug.Log("You suck ");
+        }
+    }
+
+    void resetAnimation()
+    {
+        LeanTween.moveY(interactable, interactable.transform.position.y, 0.5f).setOnComplete(() =>
+        {
+        anim.SetInteger("InteractionBehavior", ((int)Interaction.IDLE));
+        });
     }
 
     void PressButton()
@@ -174,6 +229,9 @@ public class InteractableManager : MonoBehaviour
                 break;
             case Interaction.SPIN_WHEEL:
                 SpinWheel();
+                break;
+            default:
+                resetAnimation();
                 break;
         }
 
