@@ -5,22 +5,26 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    List<InteractableManager> interactables; // list of interactables in the scene
+    InteractableManager[] interactables; // list of interactables in the scene
 
     [Range(1, 6)]
     public int timeRange; // the amount of time between interactable alerts
 
-    private int score;
-
     //private int numInks = 0;
 
     private int combo = 0;
+    private int score = 0;
+    public int points = 100;
+
+    private int numLives = 3;
 
     public GameObject inkPrefab;
 
     public GameObject player;
 
     public TextMeshProUGUI comboText;
+
+    public TextMeshProUGUI scoreText;
 
     public KeyCode Key;
  
@@ -37,6 +41,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        interactables = FindObjectsOfType<InteractableManager>();
         TimerBarScale = TimerBar.transform.localScale;
         bar = TimerBar.transform.GetChild(1).gameObject;
         barStartScale = bar.transform.localScale;
@@ -93,9 +98,26 @@ public class GameManager : MonoBehaviour
     public void incrementCombo()
     {
         combo++;
-        comboText.text = "X" + combo;
+        comboText.text = "COMBO X" + combo;
     }
 
+    public void updateScore()
+    {
+        score += points * combo;
+        scoreText.text = "SCORE: " + score;
+    }
+
+    public void missedAlert()
+    {
+        numLives--;
+        if(numLives == 0)
+        {
+            Debug.Log("Game Over!");
+        }
+        combo = (int) Mathf.Ceil(combo / 2);
+    }
+
+    // Ink Bar Stuff
     void resetTimerBar()
     {
         LeanTween.moveLocalX(bar, 0f, 0f);
