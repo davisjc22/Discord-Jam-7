@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public GameObject gameOverText;
 
+    public ScoreboardManager sbm;
 
     public KeyCode Key;
  
@@ -49,8 +50,11 @@ public class GameManager : MonoBehaviour
         barRenderer.material.color = Color.magenta;
         resetTimerBar();
         hideTimerBar();
-
+        sbm.SetLives(numLives);
+        sbm.SetCombo(combo.ToString());
+        sbm.SetScore(score.ToString());
         startInterval = Time.time; // start the clock for the interactions
+        sbm.EnableTimer(true);
     }
 
     // Update is called once per frame
@@ -111,26 +115,31 @@ public class GameManager : MonoBehaviour
     public void incrementCombo()
     {
         combo++;
-        comboText.text = "COMBO: " + combo + "X";
+        sbm.SetCombo(combo.ToString());
+        // comboText.text = "COMBO: " + combo + "X";
     }
 
     public void updateScore()
     {
         score += points * combo;
-        scoreText.text = "SCORE: " + score;
+        sbm.SetScore(score.ToString());
+        // scoreText.text = "SCORE: " + score;
     }
 
     public void missedAlert()
     {
         numLives--;
+        sbm.SetLives(numLives);
         Debug.Log("Lost a life :(");
         if(numLives == 0)
         {
             Debug.Log("Game Over!");
             gameOverText.SetActive(true);
+            sbm.EnableTimer(false);
         }
         combo = (int) Mathf.Ceil(combo / 2);
-        comboText.text = "COMBO: " + combo + "X";
+        sbm.SetCombo(combo.ToString());
+        // comboText.text = "COMBO: " + combo + "X";
     }
 
     // Ink Bar Stuff
