@@ -18,14 +18,19 @@ public class InkDroplet : MonoBehaviour
 
     private float gravityValue = -9.81f;
 
+    public ParticleSystem inkParticle;
+
+    public Vector3 normalScale;
+
     // Start is called before the first frame update
     void Start()
     {
+        normalScale = transform.localScale;
         manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         tempPosition = transform.position;
 
         transform.localScale = Vector3.zero;
-        LeanTween.scale(gameObject, new Vector3(1.5f, 1.5f, 1.5f), .5f).setEase( LeanTweenType.easeOutBack );
+        LeanTween.scale(gameObject, normalScale, .5f).setEase( LeanTweenType.easeOutBack );
     }
 
     // Update is called once per frame
@@ -55,8 +60,10 @@ public class InkDroplet : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Player")) // if the player is colliding
         {
+            Instantiate(inkParticle, inkParticle.transform.position, Quaternion.identity);
             manager.incrementCombo();
             Destroy(gameObject);
         }
     }
+
 }

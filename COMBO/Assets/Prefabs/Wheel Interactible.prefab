@@ -53,6 +53,9 @@ MonoBehaviour:
   TimerBar: {fileID: 2825813909840168375}
   time: 10
   startTime: 0
+  pressStartTime: 0
+  pressHoldTime: 3
+  playerTimerBar: {fileID: 0}
   trigger: 304
   selected_interaction: 4
   player: {fileID: 0}
@@ -67,6 +70,8 @@ MonoBehaviour:
   barRed:
     serializedVersion: 2
     rgba: 4280624565
+  interactionParticle: {fileID: 198716313669570364, guid: f547e356ab3314f11840fcb444c594fa,
+    type: 3}
 --- !u!65 &5152103499883682904
 BoxCollider:
   m_ObjectHideFlags: 0
