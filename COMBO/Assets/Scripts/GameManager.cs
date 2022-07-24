@@ -7,12 +7,11 @@ public class GameManager : MonoBehaviour
 {
     InteractableManager[] interactables; // list of interactables in the scene
 
-    [Range(1, 6)]
-    public int timeRange; // the amount of time between interactable alerts
+    public int interval = 10; // the amount of time between interactable alerts
 
-    //private int numInks = 0;
+    public float startInterval = 0;
 
-    private int combo = 0;
+    private int combo = 1;
     private int score = 0;
     public int points = 100;
 
@@ -23,14 +22,14 @@ public class GameManager : MonoBehaviour
     public GameObject player;
 
     public TextMeshProUGUI comboText;
-
     public TextMeshProUGUI scoreText;
+    public GameObject gameOverText;
+
 
     public KeyCode Key;
  
     public float startTime = 0f;
     public float holdTime = 5.0f; // 5 seconds
- 
 
     //Slider Bar
     public GameObject TimerBar;
@@ -50,12 +49,14 @@ public class GameManager : MonoBehaviour
         barRenderer.material.color = Color.magenta;
         resetTimerBar();
         hideTimerBar();
+
+        startInterval = Time.time; // start the clock for the interactions
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 barPosition = new Vector3(player.transform.position.x, player.transform.position.y + 2f, player.transform.position.z);
+        Vector3 barPosition = new Vector3(player.transform.position.x, player.transform.position.y + 5f, player.transform.position.z);
         TimerBar.transform.position = barPosition;
 
         if(Input.GetKeyDown(Key))
@@ -86,19 +87,31 @@ public class GameManager : MonoBehaviour
             resetTimerBar();
             hideTimerBar();
         }
+
+        // if time > starttime + timeRange
+            
+        if(startInterval + interval <= Time.time)
+        {
+            Debug.Log("Time for an action!");
+            // pick a random interactable
+            int index = Random.Range (0, interactables.Length);
+            InteractableManager currentInteractable = interactables[index];
+            currentInteractable.activateButton();// activate it
+            startInterval = Time.time;
+        }
+        
     }
 
     private void makeInk()
     {
         Vector3 startPosition = new Vector3(player.transform.position.x + 2f, 2f, player.transform.position.z);
         GameObject droplet = Instantiate(inkPrefab, startPosition, Quaternion.identity);
-        
     }
 
     public void incrementCombo()
     {
         combo++;
-        comboText.text = "COMBO X" + combo;
+        comboText.text = "COMBO: " + combo + "X";
     }
 
     public void updateScore()
@@ -110,11 +123,14 @@ public class GameManager : MonoBehaviour
     public void missedAlert()
     {
         numLives--;
+        Debug.Log("Lost a life :(");
         if(numLives == 0)
         {
             Debug.Log("Game Over!");
+            gameOverText.SetActive(true);
         }
         combo = (int) Mathf.Ceil(combo / 2);
+        comboText.text = "COMBO: " + combo + "X";
     }
 
     // Ink Bar Stuff
