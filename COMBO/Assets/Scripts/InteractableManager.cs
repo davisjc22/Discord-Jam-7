@@ -12,10 +12,6 @@ public class InteractableManager : MonoBehaviour
     public int time;
     private bool buttonIsActive;
     private bool playerInRange;
-    public int triggerCount = 0;
-    public float barFillRatio = 0;
-
-
     public KeyCode trigger;
     public enum Interaction
     {
@@ -47,9 +43,9 @@ public class InteractableManager : MonoBehaviour
     }
     void Update()
     {
-        barFillRatio = bar.transform.localScale.x/barStartScale.x;
+        float barFillRatio = bar.transform.localScale.x / barStartScale.x;
         Renderer barRenderer = bar.GetComponent<Renderer>();
-        
+
         if (barFillRatio < .5)
         {
             barRenderer.material.color = Color.green;
@@ -63,7 +59,7 @@ public class InteractableManager : MonoBehaviour
             barRenderer.material.color = Color.red;
         }
 
-        if(buttonIsActive && playerInRange)
+        if (buttonIsActive && playerInRange)
         {
             if (Input.GetKeyDown(trigger))
             {
@@ -108,14 +104,14 @@ public class InteractableManager : MonoBehaviour
 
     void animateTimerBar()
     {
-        LeanTween.moveLocalX(bar,0,time);
-        LeanTween.scaleX(bar,barStartScale.x,time).setOnComplete(() => deactivateButton());
+        LeanTween.moveLocalX(bar, 0, time);
+        LeanTween.scaleX(bar, barStartScale.x, time).setOnComplete(() => deactivateButton());
     }
     void hideTimerBar()
     {
-        LeanTween.scale(TimerBar, Vector3.zero, .3f).setEase( LeanTweenType.easeInBack);
+        LeanTween.scale(TimerBar, Vector3.zero, .3f).setEase(LeanTweenType.easeInBack);
     }
-    
+
 
     void activateButton()
     {
@@ -147,9 +143,9 @@ public class InteractableManager : MonoBehaviour
     void PullLever()
     {
 
-        LeanTween.moveLocalY(interactable, -0.1f, 0.5f).setOnComplete(() =>
+        LeanTween.rotateX(interactable, 45, 0.5f).setOnComplete(() =>
         {
-            LeanTween.moveLocalY(interactable, 0.1f, 0.5f).setOnComplete(() =>
+            LeanTween.rotateX(interactable, 0, 0.5f).setOnComplete(() =>
             {
                 anim.SetInteger("InteractionBehavior", ((int)Interaction.IDLE));
             });
@@ -159,7 +155,7 @@ public class InteractableManager : MonoBehaviour
     void SpinWheel()
     {
 
-        LeanTween.rotateZ(interactable, 1080, 4).setOnComplete(() =>
+        LeanTween.rotateZ(interactable, 1080, 2).setDelay(1.0f).setOnComplete(() =>
         {
             anim.SetInteger("InteractionBehavior", ((int)Interaction.IDLE));
         });
