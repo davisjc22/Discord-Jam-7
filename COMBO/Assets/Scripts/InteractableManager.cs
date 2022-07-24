@@ -13,6 +13,10 @@ public class InteractableManager : MonoBehaviour
     private Vector3 barStartScale;
     private Vector3 TimerBarScale;
     public int time;
+
+    //interactable timer
+    public float startTime = 0f;
+
     private bool buttonIsActive;
     private bool playerInRange;
     public KeyCode trigger;
@@ -79,6 +83,12 @@ public class InteractableManager : MonoBehaviour
                 deactivateButton(true);
             }
         }
+
+        if(startTime + time <= Time.time && buttonIsActive)
+        {
+            deactivateButton(false);
+        }
+
     }
 
     void ShowPlayerAnimation()
@@ -115,7 +125,8 @@ public class InteractableManager : MonoBehaviour
     void animateTimerBar()
     {
         LeanTween.moveLocalX(bar, 0, time);
-        LeanTween.scaleX(bar, barStartScale.x, time).setOnComplete(() => deactivateButton(false));
+        // LeanTween.scaleX(bar, barStartScale.x, time);
+        LeanTween.scaleX(bar, barStartScale.x, time).setOnComplete(() => hideTimerBar());
     }
     void hideTimerBar()
     {
@@ -124,7 +135,7 @@ public class InteractableManager : MonoBehaviour
 
     void showTimerBar()
     {
-        LeanTween.scale(TimerBar, TimerBarScale, .5f).setEase( LeanTweenType.easeOutBack);;
+        LeanTween.scale(TimerBar, TimerBarScale, .5f).setEase( LeanTweenType.easeOutBack);
     }
 
     void resetTimerBar()
@@ -141,12 +152,13 @@ public class InteractableManager : MonoBehaviour
         alertBubble.showBubble();
         showTimerBar();
         animateTimerBar();
+        startTime = Time.time;
     }
 
     void deactivateButton(bool completed)
     {
         buttonIsActive = false;
-        hideTimerBar();
+        // hideTimerBar();
         alertBubble.hideBubble();
         instructionBubble.hideBubble();
         
