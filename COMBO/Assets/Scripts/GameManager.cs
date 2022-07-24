@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
     private Vector3 TimerBarScale;
     private GameObject bar;
     private Vector3 barStartScale;
+    public Color32 barInk = new Color32(166, 31, 81, 255);
 
     // Start is called before the first frame update
     void Start()
@@ -47,7 +48,7 @@ public class GameManager : MonoBehaviour
         barStartScale = bar.transform.localScale;
         bar.transform.localScale = new Vector3(0, barStartScale.y, barStartScale.z);
         Renderer barRenderer = bar.GetComponent<Renderer>();
-        barRenderer.material.color = Color.magenta;
+        barRenderer.material.color = barInk;
         resetTimerBar();
         hideTimerBar();
         sbm.SetLives(numLives);
@@ -65,10 +66,12 @@ public class GameManager : MonoBehaviour
 
         if(Input.GetKeyDown(Key))
         {
+            Renderer barRenderer = bar.GetComponent<Renderer>();
+            barRenderer.material.color = barInk;
             startTime = Time.time;
             Debug.Log("Starting Timer");
             showTimerBar();
-            animateTimerBar();
+            animateTimerBar(holdTime);
         }
         else if (Input.GetKey(Key))
         {
@@ -79,7 +82,7 @@ public class GameManager : MonoBehaviour
                 startTime = Time.time;
                 LeanTween.cancel(bar);
                 resetTimerBar();
-                animateTimerBar();
+                animateTimerBar(holdTime);
             }
         }
         else if(Input.GetKeyUp(Key))
@@ -143,23 +146,29 @@ public class GameManager : MonoBehaviour
     }
 
     // Ink Bar Stuff
-    void resetTimerBar()
+    public void resetTimerBar()
     {
         LeanTween.moveLocalX(bar, 0f, 0f);
         LeanTween.scaleX(bar,0f,0f);
     }
-    void animateTimerBar()
+    public void animateTimerBar(float howLong)
     {
-        LeanTween.moveLocalX(bar,0,holdTime);
-        LeanTween.scaleX(bar,barStartScale.x,holdTime);
+        LeanTween.moveLocalX(bar,0,howLong);
+        LeanTween.scaleX(bar,barStartScale.x,howLong);
     }
-    void hideTimerBar()
+    public void hideTimerBar()
     {
         LeanTween.scale(TimerBar, Vector3.zero, .3f).setEase( LeanTweenType.easeInBack);
     }
 
-    void showTimerBar()
+    public void showTimerBar()
     {
         LeanTween.scale(TimerBar, TimerBarScale, .5f).setEase( LeanTweenType.easeOutBack);;
+    }
+
+    public void colorTimerBar(Color c)
+    {
+        Renderer barRenderer = bar.GetComponent<Renderer>();
+        barRenderer.material.color = c;
     }
 }
