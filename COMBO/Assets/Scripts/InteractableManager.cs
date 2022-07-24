@@ -34,6 +34,9 @@ public class InteractableManager : MonoBehaviour
     public GameObject interactable;
     public AudioSource audioData;
 
+    public Color32 barGreen = new Color32(0, 245, 149, 255);
+    public Color32 barYellow = new Color32(239, 129, 78, 255);
+    public Color32 barRed = new Color32(181, 37, 37, 255);
 
 
     // Start is called before the first frame update
@@ -60,15 +63,15 @@ public class InteractableManager : MonoBehaviour
 
         if (barFillRatio < .5)
         {
-            barRenderer.material.color = Color.green;
+            barRenderer.material.color = barGreen;
         }
         else if (barFillRatio < .9)
         {
-            barRenderer.material.color = Color.yellow;
+            barRenderer.material.color = barYellow;
         }
         else
         {
-            barRenderer.material.color = Color.red;
+            barRenderer.material.color = barRed;
         }
 
         if (buttonIsActive && playerInRange)
@@ -81,6 +84,7 @@ public class InteractableManager : MonoBehaviour
                 audioData.Play();
                 LeanTween.cancel(bar);
                 deactivateButton(true);
+                hideTimerBar();
             }
         }
 
