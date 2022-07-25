@@ -6,6 +6,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     InteractableManager[] interactables; // list of interactables in the scene
+    public List<GameObject> inkSpawners;
 
     public int interval = 10; // the amount of time between interactable alerts
 
@@ -140,7 +141,9 @@ public class GameManager : MonoBehaviour
 
     private void makeInk()
     {
-        Vector3 startPosition = new Vector3(player.transform.position.x + 2f, 2f, player.transform.position.z);
+        // Vector3 startPosition = new Vector3(player.transform.position.x + 2f, 2f, player.transform.position.z);
+        int inkIndex = Random.Range (0, inkSpawners.Count);
+        Vector3 startPosition = inkSpawners[inkIndex].transform.position;
         GameObject droplet = Instantiate(inkPrefab, startPosition, Quaternion.identity);
     }
 
