@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
         environmentManager.ZoomToScoreboard();
         ResetGame(true);
         startInterval = Time.time; // start the clock for the interactions
+        isPlaying = false;
     }
 
     // Update is called once per frame
@@ -78,7 +79,7 @@ public class GameManager : MonoBehaviour
             Renderer barRenderer = bar.GetComponent<Renderer>();
             barRenderer.material.color = barInk;
             startTime = Time.time;
-            Debug.Log("Starting Timer");
+            //Debug.Log("Starting Timer");
             showTimerBar();
             animateTimerBar(holdTime);
         }
@@ -86,7 +87,7 @@ public class GameManager : MonoBehaviour
         {
             if (startTime + holdTime <= Time.time)
             {
-                Debug.Log("It Works Great!");
+               // Debug.Log("It Works Great!");
                 makeInk();
                 startTime = Time.time;
                 LeanTween.cancel(bar);
@@ -96,7 +97,7 @@ public class GameManager : MonoBehaviour
         }
         else if (Input.GetKeyUp(Key))
         {
-            Debug.Log("Ending Timer");
+            //Debug.Log("Ending Timer");
             startTime = 0;
 
             LeanTween.cancel(bar);
@@ -108,7 +109,7 @@ public class GameManager : MonoBehaviour
 
         if (startInterval + interval <= Time.time)
         {
-            Debug.Log("Time for an action!");
+            //Debug.Log("Time for an action!");
             // pick a random interactable
             int index = Random.Range(0, interactables.Length);
             if (isPlaying)
@@ -162,7 +163,7 @@ public class GameManager : MonoBehaviour
 
             numLives--;
             sbm.SetLives(numLives);
-            Debug.Log("Lost a life :(");
+            //Debug.Log("Lost a life :(");
             if (numLives == 0)
             {
                 sbm.ShowGameOver();
