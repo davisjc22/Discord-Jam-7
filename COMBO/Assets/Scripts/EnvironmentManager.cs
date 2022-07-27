@@ -107,6 +107,12 @@ public class EnvironmentManager : MonoBehaviour
 
     public void ZoomToScoreboard()
     {
+        if (cameraTransform == null)
+        {
+            Camera camera = FindObjectOfType<Camera>();
+            cameraTransform = camera.GetComponent<Transform>();
+        }
+        
         LeanTween.moveLocal(cameraTransform.gameObject, new Vector3(-0.5f, -9.5f, -7.5f), cameraTransitionDuration).setEase(LeanTweenType.easeInOutSine);
         LeanTween.rotateLocal(cameraTransform.gameObject, new Vector3(0f, 0f, 0f), cameraTransitionDuration).setEase(LeanTweenType.easeInOutSine);
         isZooming = true;

@@ -14,9 +14,9 @@ public class InkDroplet : MonoBehaviour
     public LayerMask groundMask;
     public Transform groundCheck;
     public float groundDistance = 0.01f;
-    bool grounded = false;
+    //bool grounded = false;
 
-    private float gravityValue = -9.81f;
+    //private float gravityValue = -9.81f;
 
     public ParticleSystem inkParticle;
 
