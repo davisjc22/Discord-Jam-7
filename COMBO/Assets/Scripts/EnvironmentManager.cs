@@ -36,7 +36,6 @@ public class EnvironmentManager : MonoBehaviour
                 light.intensity = standardIntensity;
             }
         }
-        ZoomAwayFromScoreboard();
     }
 
     // Update is called once per frame
