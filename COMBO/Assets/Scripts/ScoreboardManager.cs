@@ -16,9 +16,7 @@ public class ScoreboardManager : MonoBehaviour
     public GameObject resultsScreen;
     public GameObject gameplayScreen;
     public GameObject infoScreen;
-    public RawImage life1;
-    public RawImage life2;
-    public RawImage life3;
+    public RawImage[] lifeImages;
     public RawImage[] ratingImages;
     private bool timerEnabled;
     private float timerCounter = 0f;
@@ -28,13 +26,35 @@ public class ScoreboardManager : MonoBehaviour
     private int rating = 0;
     private int numLives = 0;
 
-    private GameObject activeScreen;
+
+    public enum Screen
+    {
+        GAMEPLAY,
+        INFO,
+        RESULTS
+    }
+
+    private Screen activeScreen;
+    private GameObject EnumToScreen(Screen screen)
+    {
+        switch (screen)
+        {
+            case Screen.GAMEPLAY:
+                return gameplayScreen;
+            case Screen.INFO:
+                return infoScreen;
+            case Screen.RESULTS:
+                return resultsScreen;
+            default:
+                return gameplayScreen;
+        }
+    }
 
 
     // Start is called before the first frame update
     void Start()
     {
-        ShowScreen(infoScreen);
+        ShowScreen(Screen.INFO);
     }
 
     string SecondsToTime(int time)
@@ -59,45 +79,17 @@ public class ScoreboardManager : MonoBehaviour
         timeTextElement.SetText(SecondsToTime(((int)timerCounter)));
         scoreTextElement.SetText(CommasInNumber(score));
         comboTextElement.SetText(combo.ToString() + "X");
-        switch (numLives)
+        for (int i = 0; i < lifeImages.Length; i++)
         {
-            case 3:
-                {
-                    life1.enabled = true;
-                    life2.enabled = true;
-                    life3.enabled = true;
-                    break;
-                }
-            case 2:
-                {
-                    life1.enabled = false;
-                    life2.enabled = true;
-                    life3.enabled = true;
-                    break;
-                }
-            case 1:
-                {
-                    life1.enabled = false;
-                    life2.enabled = false;
-                    life3.enabled = true;
-                    break;
-                }
-            case 0:
-                {
-                    life1.enabled = false;
-                    life2.enabled = false;
-                    life3.enabled = false;
-                    break;
-                }
-            default:
-                {
-                    life1.enabled = true;
-                    life2.enabled = true;
-                    life3.enabled = true;
-                    break;
-                }
+            if (i < numLives)
+            {
+                lifeImages[i].enabled = true;
+            }
+            else
+            {
+                lifeImages[i].enabled = false;
+            }
         }
-
     }
 
     public void SetScore(int _score)
@@ -124,30 +116,34 @@ public class ScoreboardManager : MonoBehaviour
     {
         timerCounter = 0f;
     }
-    public LTDescr ShowScreen(GameObject screen)
+    public LTDescr ShowScreen(Screen screen)
     {
-        screen.transform.position = new Vector3(screen.transform.position.x, 800, screen.transform.position.z);
+        GameObject screenObject = EnumToScreen(screen);
+        screenObject.transform.position = new Vector3(screenObject.transform.position.x, 800, screenObject.transform.position.z);
         activeScreen = screen;
-        return LeanTween.moveLocalY(screen, 0, 0.8f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.5f);
+        return LeanTween.moveLocalY(screenObject, 0, 0.8f).setEase(LeanTweenType.easeInOutQuad).setDelay(0.5f);
     }
-    public void HideScreen(GameObject screen)
+    public void HideScreen(Screen screen)
     {
-        LeanTween.moveLocalY(screen, screen.transform.position.y - 30, 0.2f).setEase(LeanTweenType.easeInOutQuad).setOnComplete(() =>
+        GameObject screenObject = EnumToScreen(screen);
+        LeanTween.moveLocalY(screenObject, screenObject.transform.position.y - 30, 0.2f).setEase(LeanTweenType.easeInOutQuad).setOnComplete(() =>
          {
-             LeanTween.moveLocalY(screen, -800, 1.0f).setEase(LeanTweenType.easeInOutQuad);
+             LeanTween.moveLocalY(screenObject, -800, 1.0f).setEase(LeanTweenType.easeInOutQuad);
          });
     }
-    public LTDescr ReplaceScreen(GameObject oldScreen, GameObject newScreen)
+    public LTDescr ReplaceScreen(Screen screen)
     {
+        GameObject screenObject = EnumToScreen(screen);
         HideScreen(activeScreen);
-        return ShowScreen(newScreen);
+        return ShowScreen(screen);
     }
     public void ShowGameOver()
     {
         SetTimerEnabled(false);
-        life1.enabled = false;
-        life2.enabled = false;
-        life3.enabled = false;
+        foreach (RawImage image in lifeImages)
+        {
+            image.enabled = false;
+        }
         foreach (RawImage image in ratingImages)
         {
             image.enabled = false;
@@ -157,7 +153,7 @@ public class ScoreboardManager : MonoBehaviour
         SetRating(_rating);
         gameOverScoreTextElement.SetText("0");
         gameOverTimeTextElement.SetText("0:00");
-        ReplaceScreen(gameplayScreen, resultsScreen).setOnComplete(() =>
+        ReplaceScreen(Screen.RESULTS).setOnComplete(() =>
         {
             StartCoroutine(TallyTimer((int)timerCounter));
 
@@ -168,13 +164,11 @@ public class ScoreboardManager : MonoBehaviour
         StopAllCoroutines();
         if (firstTime)
         {
-            ShowScreen(infoScreen);
-            // StartGamePlay();
+            ShowScreen(Screen.INFO);
         }
         else
         {
-            // HideScreen(infoScreen);
-            ReplaceScreen(resultsScreen, gameplayScreen);
+            ReplaceScreen(Screen.GAMEPLAY);
         }
     }
     public void StartGamePlay()
@@ -186,7 +180,7 @@ public class ScoreboardManager : MonoBehaviour
         SetScore(0);
         SetLives(3);
         timerCounter = 0;
-        ShowScreen(gameplayScreen);
+        ShowScreen(Screen.GAMEPLAY);
     }
 
     IEnumerator TallyTimer(int value)

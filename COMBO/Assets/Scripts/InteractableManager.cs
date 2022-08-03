@@ -91,7 +91,7 @@ public class InteractableManager : MonoBehaviour
             // Debug.Log("pressStartTime: " + pressStartTime);
             // Debug.Log("pressHoldTime: " + pressHoldTime);
             // Debug.Log("Time: " + Time.time);
-            if(Input.GetKeyDown(trigger)) //when the key is first pressed
+            if (Input.GetKeyDown(trigger)) //when the key is first pressed
             {
                 pressStartTime = Time.time;
                 //Debug.Log("Starting Timer");
@@ -105,8 +105,9 @@ public class InteractableManager : MonoBehaviour
             {
                 if (pressStartTime + pressHoldTime <= Time.time)
                 {
-                    deactivateButton(true); // successfully performed operation
-                    //Debug.Log("Action Complete!");
+                    deactivateButton(); // successfully performed operation
+                    manager.updateScore();
+                    Debug.Log("Good job");
                     LeanTween.cancel(bar);
                     hideTimerBar();
                     resetTimerBar();
@@ -119,7 +120,7 @@ public class InteractableManager : MonoBehaviour
                 }
                 holdingButton = true;
             }
-            else if(Input.GetKeyUp(trigger))
+            else if (Input.GetKeyUp(trigger))
             {
                 pressStartTime = 0;
                 holdingButton = false;
@@ -128,10 +129,12 @@ public class InteractableManager : MonoBehaviour
             }
         }
 
-        if(buttonIsActive && (startTime + time <= Time.time && buttonIsActive) && !holdingButton)
+        if (buttonIsActive && (startTime + time <= Time.time && buttonIsActive) && !holdingButton)
         {
             //Debug.Log("ouch, didn't make it");
-            deactivateButton(false);
+            deactivateButton();
+            manager.missedAlert();
+            Debug.Log("You suck ");
         }
     }
 
@@ -140,7 +143,7 @@ public class InteractableManager : MonoBehaviour
         manager.colorTimerBar(new Color32(48, 123, 140, 255));
         manager.showTimerBar();
         manager.animateTimerBar(pressHoldTime);
-        
+
     }
 
     void stopPlayerTimerBar()
@@ -200,7 +203,7 @@ public class InteractableManager : MonoBehaviour
 
     void showTimerBar()
     {
-        LeanTween.scale(TimerBar, TimerBarScale, .5f).setEase( LeanTweenType.easeOutBack);
+        LeanTween.scale(TimerBar, TimerBarScale, .5f).setEase(LeanTweenType.easeOutBack);
     }
 
     void resetTimerBar()
@@ -214,7 +217,7 @@ public class InteractableManager : MonoBehaviour
     public void activateButton()
     {
         buttonIsActive = true;
-        if(playerInRange)
+        if (playerInRange)
         {
             instructionBubble.showBubble();
         }
@@ -227,30 +230,19 @@ public class InteractableManager : MonoBehaviour
         startTime = Time.time;
     }
 
-    public void deactivateButton(bool completed)
+    public void deactivateButton()
     {
         buttonIsActive = false;
-        // hideTimerBar();
         alertBubble.hideBubble();
         instructionBubble.hideBubble();
-        
-        if(completed)
-        {
-            manager.updateScore();
-            Debug.Log("Good job");
-        }
-        else
-        {
-            manager.missedAlert();
-            Debug.Log("You suck ");
-        }
+        hideTimerBar();
     }
 
     void resetAnimation()
     {
         LeanTween.moveY(interactable, interactable.transform.position.y, 0.5f).setOnComplete(() =>
         {
-        anim.SetInteger("InteractionBehavior", ((int)Interaction.IDLE));
+            anim.SetInteger("InteractionBehavior", ((int)Interaction.IDLE));
         });
     }
 

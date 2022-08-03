@@ -42,7 +42,13 @@ public class GameManager : MonoBehaviour
     private Vector3 barStartScale;
     public Color32 barInk = new Color32(166, 31, 81, 255);
 
-    private bool isPlaying = false;
+    private enum GameState
+    {
+        INFOSCREEN,
+        PLAYING,
+        RESULTS
+    }
+    private GameState gameState = GameState.INFOSCREEN;
 
     // Start is called before the first frame update
     void Start()
@@ -56,10 +62,8 @@ public class GameManager : MonoBehaviour
         barRenderer.material.color = barInk;
         resetTimerBar();
         hideTimerBar();
-        environmentManager.ZoomToScoreboard();
-        ResetGame(true);
         startInterval = Time.time; // start the clock for the interactions
-        isPlaying = false;
+        environmentManager.ZoomToScoreboard();
     }
 
     // Update is called once per frame
@@ -68,123 +72,147 @@ public class GameManager : MonoBehaviour
         Vector3 barPosition = new Vector3(player.transform.position.x, player.transform.position.y + 5f, player.transform.position.z);
         TimerBar.transform.position = barPosition;
 
-        if (!isPlaying)
+        if (gameState == GameState.INFOSCREEN)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                ResetGame(false);
+                NextState();
             }
         }
-        if (Input.GetKeyDown(Key))
+        else if (gameState == GameState.PLAYING)
         {
-            Renderer barRenderer = bar.GetComponent<Renderer>();
-            barRenderer.material.color = barInk;
-            startTime = Time.time;
-            //Debug.Log("Starting Timer");
-            showTimerBar();
-            animateTimerBar(holdTime);
-        }
-        else if (Input.GetKey(Key))
-        {
-            if (startTime + holdTime <= Time.time)
+
+            if (Input.GetKeyDown(Key))
             {
-               // Debug.Log("It Works Great!");
-                makeInk();
+                Renderer barRenderer = bar.GetComponent<Renderer>();
+                barRenderer.material.color = barInk;
                 startTime = Time.time;
-                LeanTween.cancel(bar);
-                resetTimerBar();
+                //Debug.Log("Starting Timer");
+                showTimerBar();
                 animateTimerBar(holdTime);
             }
-        }
-        else if (Input.GetKeyUp(Key))
-        {
-            //Debug.Log("Ending Timer");
-            startTime = 0;
-
-            LeanTween.cancel(bar);
-            resetTimerBar();
-            hideTimerBar();
-        }
-
-        // if time > starttime + timeRange
-
-        if (startInterval + interval <= Time.time)
-        {
-            //Debug.Log("Time for an action!");
-            // pick a random interactable
-            int index = Random.Range(0, interactables.Length);
-            if (isPlaying)
+            else if (Input.GetKey(Key))
             {
+                if (startTime + holdTime <= Time.time)
+                {
+                    // Debug.Log("It Works Great!");
+                    makeInk();
+                    startTime = Time.time;
+                    LeanTween.cancel(bar);
+                    resetTimerBar();
+                    animateTimerBar(holdTime);
+                }
+            }
+            else if (Input.GetKeyUp(Key))
+            {
+                //Debug.Log("Ending Timer");
+                startTime = 0;
 
+                LeanTween.cancel(bar);
+                resetTimerBar();
+                hideTimerBar();
+            }
+
+            if (startInterval + interval <= Time.time)
+            {
+                //Debug.Log("Time for an action!");
+                // pick a random interactable
+                int index = Random.Range(0, interactables.Length);
                 InteractableManager currentInteractable = interactables[index];
                 currentInteractable.activateButton();// activate it
+                startInterval = Time.time;
             }
-            startInterval = Time.time;
+
+            sbm.SetCombo(combo);
+            sbm.SetScore(score);
+            sbm.SetLives(numLives);
+        }
+        else if (gameState == GameState.RESULTS)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                NextState();
+            }
         }
 
     }
 
-    private void ResetGame(bool firstTime)
+    private void NextState()
+    {
+        switch (gameState)
+        {
+            case GameState.INFOSCREEN:
+                ResetGame();
+                environmentManager.ZoomAwayFromScoreboard();
+                sbm.ReplaceScreen(ScoreboardManager.Screen.GAMEPLAY);
+                gameState = GameState.PLAYING;
+                break;
+            case GameState.PLAYING:
+                environmentManager.ZoomToScoreboard();
+                sbm.ShowGameOver();
+                gameState = GameState.RESULTS;
+                break;
+            case GameState.RESULTS:
+                ResetGame();
+                environmentManager.ZoomAwayFromScoreboard();
+                sbm.ReplaceScreen(ScoreboardManager.Screen.GAMEPLAY);
+                gameState = GameState.PLAYING;
+                break;
+        }
+    }
+
+    private void ResetGame()
     {
         combo = 1;
         score = 0;
         numLives = 3;
-        sbm.ShowGamePlay(firstTime);
-        sbm.SetCombo(combo);
-        sbm.SetScore(score);
-        sbm.SetLives(numLives);
         sbm.ResetTimer();
         sbm.SetTimerEnabled(true);
-        isPlaying = true;
-        environmentManager.ZoomAwayFromScoreboard();
     }
 
     private void makeInk()
     {
         // Vector3 startPosition = new Vector3(player.transform.position.x + 2f, 2f, player.transform.position.z);
-        int inkIndex = Random.Range (0, inkSpawners.Count);
+        int inkIndex = Random.Range(0, inkSpawners.Count);
         Vector3 startPosition = inkSpawners[inkIndex].transform.position;
         GameObject droplet = Instantiate(inkPrefab, startPosition, Quaternion.identity);
+    }
+
+    private void LoseLife()
+    {
+        numLives--;
+        if (numLives == 0)
+        {
+            NextState();
+            foreach (InteractableManager interactable in interactables)
+            {
+                interactable.deactivateButton();
+            }
+        }
+        else
+        {
+
+            environmentManager.isFlickering = true;
+            environmentManager.isShaking = true;
+        }
     }
 
     public void incrementCombo()
     {
         combo++;
-        sbm.SetCombo(combo);
     }
 
     public void updateScore()
     {
         score += points * combo;
-        sbm.SetScore(score);
     }
 
     public void missedAlert()
     {
-        if (isPlaying)
+        if (gameState == GameState.PLAYING)
         {
-
-            numLives--;
-            sbm.SetLives(numLives);
-            //Debug.Log("Lost a life :(");
-            if (numLives == 0)
-            {
-                sbm.ShowGameOver();
-                environmentManager.ZoomToScoreboard();
-                isPlaying = false;
-                foreach (InteractableManager interactable in interactables)
-                {
-                    interactable.deactivateButton(false);
-                }
-            }
-            else
-            {
-
-                environmentManager.isFlickering = true;
-                environmentManager.isShaking = true;
-            }
+            LoseLife();
             combo = (int)Mathf.Max(Mathf.Ceil(combo / 2), 1f);
-            sbm.SetCombo(combo);
         }
     }
 
@@ -196,8 +224,8 @@ public class GameManager : MonoBehaviour
     }
     public void animateTimerBar(float howLong)
     {
-        LeanTween.moveLocalX(bar,0,howLong);
-        LeanTween.scaleX(bar,barStartScale.x,howLong);
+        LeanTween.moveLocalX(bar, 0, howLong);
+        LeanTween.scaleX(bar, barStartScale.x, howLong);
     }
     public void hideTimerBar()
     {
