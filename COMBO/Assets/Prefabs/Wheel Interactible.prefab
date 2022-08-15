@@ -50,17 +50,19 @@ MonoBehaviour:
   manager: {fileID: 0}
   alertBubble: {fileID: 4526763889187325655}
   instructionBubble: {fileID: 6830707313230928802}
-  TimerBar: {fileID: 2825813909840168375}
+  interactableTimerBarPrefab: {fileID: 2825813909840168375}
   time: 10
   startTime: 0
   pressStartTime: 0
   pressHoldTime: 3
-  playerTimerBar: {fileID: 0}
   trigger: 304
   selected_interaction: 4
   player: {fileID: 0}
   interactable: {fileID: 8120251767004139762}
   audioData: {fileID: 0}
+  interactionInProgress:
+    serializedVersion: 2
+    rgba: 4287396656
   barGreen:
     serializedVersion: 2
     rgba: 4288017664

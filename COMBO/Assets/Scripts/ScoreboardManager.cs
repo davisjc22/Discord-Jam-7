@@ -149,7 +149,7 @@ public class ScoreboardManager : MonoBehaviour
             image.enabled = false;
         }
         float maximumPPS = 2000f / 60f;
-        int _rating = (int)Mathf.Max(Mathf.Min((score / timerCounter) / maximumPPS, 8f), 1f);
+        int _rating = (int)Mathf.Max(Mathf.Min(8f * ((score / timerCounter) / maximumPPS), 8f), 1f);
         SetRating(_rating);
         gameOverScoreTextElement.SetText("0");
         gameOverTimeTextElement.SetText("0:00");

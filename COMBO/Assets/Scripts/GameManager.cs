@@ -35,12 +35,13 @@ public class GameManager : MonoBehaviour
     public float startTime = 0f;
     public float holdTime = 5.0f; // 5 seconds
 
-    //Slider Bar
-    public GameObject TimerBar;
-    private Vector3 TimerBarScale;
-    private GameObject bar;
-    private Vector3 barStartScale;
-    public Color32 barInk = new Color32(166, 31, 81, 255);
+    // Player slider Bar
+    public GameObject playerTimerBarPrefab;
+    // the actual gameObject we want to control
+    private GameObject playerTimerBar;
+    private Vector3 playerTimerBarScale;
+    private Vector3 playerTimerBarStartScale;
+    public Color32 timerBarInkColor = new Color32(166, 31, 81, 255);
 
     private enum GameState
     {
@@ -54,14 +55,14 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         interactables = FindObjectsOfType<InteractableManager>();
-        TimerBarScale = TimerBar.transform.localScale;
-        bar = TimerBar.transform.GetChild(1).gameObject;
-        barStartScale = bar.transform.localScale;
-        bar.transform.localScale = new Vector3(0, barStartScale.y, barStartScale.z);
-        Renderer barRenderer = bar.GetComponent<Renderer>();
-        barRenderer.material.color = barInk;
-        resetTimerBar();
-        hideTimerBar();
+        playerTimerBarScale = playerTimerBarPrefab.transform.localScale;
+        playerTimerBar = playerTimerBarPrefab.transform.GetChild(1).gameObject;
+        playerTimerBarStartScale = playerTimerBar.transform.localScale;
+        playerTimerBar.transform.localScale = new Vector3(0, playerTimerBarStartScale.y, playerTimerBarStartScale.z);
+        Renderer barRenderer = playerTimerBar.GetComponent<Renderer>();
+        barRenderer.material.color = timerBarInkColor;
+        resetPlayerTimerBar();
+        hidePlayerTimerBar();
         startInterval = Time.time; // start the clock for the interactions
         environmentManager.ZoomToScoreboard();
     }
@@ -70,7 +71,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         Vector3 barPosition = new Vector3(player.transform.position.x, player.transform.position.y + 5f, player.transform.position.z);
-        TimerBar.transform.position = barPosition;
+        playerTimerBarPrefab.transform.position = barPosition;
 
         if (gameState == GameState.INFOSCREEN)
         {
@@ -84,12 +85,12 @@ public class GameManager : MonoBehaviour
 
             if (Input.GetKeyDown(Key))
             {
-                Renderer barRenderer = bar.GetComponent<Renderer>();
-                barRenderer.material.color = barInk;
+                Renderer barRenderer = playerTimerBar.GetComponent<Renderer>();
+                barRenderer.material.color = timerBarInkColor;
                 startTime = Time.time;
                 //Debug.Log("Starting Timer");
-                showTimerBar();
-                animateTimerBar(holdTime);
+                showPlayerTimerBar();
+                animatePlayerTimerBar(holdTime);
             }
             else if (Input.GetKey(Key))
             {
@@ -98,9 +99,9 @@ public class GameManager : MonoBehaviour
                     // Debug.Log("It Works Great!");
                     makeInk();
                     startTime = Time.time;
-                    LeanTween.cancel(bar);
-                    resetTimerBar();
-                    animateTimerBar(holdTime);
+                    LeanTween.cancel(playerTimerBar);
+                    resetPlayerTimerBar();
+                    animatePlayerTimerBar(holdTime);
                 }
             }
             else if (Input.GetKeyUp(Key))
@@ -108,9 +109,9 @@ public class GameManager : MonoBehaviour
                 //Debug.Log("Ending Timer");
                 startTime = 0;
 
-                LeanTween.cancel(bar);
-                resetTimerBar();
-                hideTimerBar();
+                LeanTween.cancel(playerTimerBar);
+                resetPlayerTimerBar();
+                hidePlayerTimerBar();
             }
 
             if (startInterval + interval <= Time.time)
@@ -216,30 +217,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Ink Bar Stuff
-    public void resetTimerBar()
+    // Player Timer Bar Stuff
+    public void resetPlayerTimerBar()
     {
-        LeanTween.moveLocalX(bar, 0f, 0f);
-        LeanTween.scaleX(bar, 0f, 0f);
+        LeanTween.moveLocalX(playerTimerBar, 0f, 0f);
+        LeanTween.scaleX(playerTimerBar, 0f, 0f);
     }
-    public void animateTimerBar(float howLong)
+    public void animatePlayerTimerBar(float howLong)
     {
-        LeanTween.moveLocalX(bar, 0, howLong);
-        LeanTween.scaleX(bar, barStartScale.x, howLong);
+        LeanTween.moveLocalX(playerTimerBar, 0, howLong);
+        LeanTween.scaleX(playerTimerBar, playerTimerBarStartScale.x, howLong);
     }
-    public void hideTimerBar()
+    public void hidePlayerTimerBar()
     {
-        LeanTween.scale(TimerBar, Vector3.zero, .3f).setEase(LeanTweenType.easeInBack);
-    }
-
-    public void showTimerBar()
-    {
-        LeanTween.scale(TimerBar, TimerBarScale, .5f).setEase(LeanTweenType.easeOutBack); ;
+        LeanTween.scale(playerTimerBarPrefab, Vector3.zero, .3f).setEase(LeanTweenType.easeInBack);
     }
 
-    public void colorTimerBar(Color c)
+    public void showPlayerTimerBar()
     {
-        Renderer barRenderer = bar.GetComponent<Renderer>();
+        LeanTween.scale(playerTimerBarPrefab, playerTimerBarScale, .5f).setEase(LeanTweenType.easeOutBack); ;
+    }
+
+    public void colorPlayerTimerBar(Color c)
+    {
+        Renderer barRenderer = playerTimerBar.GetComponent<Renderer>();
         barRenderer.material.color = c;
     }
 }
